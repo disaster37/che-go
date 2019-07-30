@@ -10,6 +10,6 @@ RUN sh /tmp/debian.sh
 
 VOLUME "/home/dev"
 
-CMD ['sleep', 'infinity']
+CMD ["sleep", "infinity"]
 
 
