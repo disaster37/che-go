@@ -33,11 +33,9 @@ RUN \
   go get -u github.com/josharian/impl &&\
   go get -u github.com/haya14busa/goplay/cmd/goplay &&\
   go get -u github.com/davidrjenni/reftools/cmd/fillstruct &&\
-  go get -u github.com/go-delve/delve/tree/master/cmd/dlv &&\
   go get -u github.com/tylerb/gotype-live &&\
   go get -u github.com/sourcegraph/go-langserver &&\
-  go get -u gotest.tools/gotestsum &&\
-  gometalinter --install
+  go get -u gotest.tools/gotestsum
 
 WORKDIR "/projects"
 VOLUME "/home/dev"
