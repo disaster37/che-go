@@ -5,6 +5,8 @@ MAINTAINER Sebastien LANGOUREAUX <linuxworkgroup@hotmail.com>
 ARG http_proxy
 ARG https_proxy
 
+ENV GO111MODULE=on
+
 ADD https://raw.githubusercontent.com/disaster37/che-scripts/master/debian.sh /tmp/debian.sh
 RUN sh /tmp/debian.sh
 
