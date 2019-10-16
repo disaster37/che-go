@@ -28,7 +28,7 @@ RUN \
   go get -u -v golang.org/x/tools/cmd/gorename &&\
   go get -u -v sourcegraph.com/sqs/goreturns &&\
   go get -u -v golang.org/x/tools/cmd/goimports &&\
-  go get -u -v github.com/cweill/gotests/... &&\
+  go get -u -v github.com/cweill/gotests &&\
   go get -u -v golang.org/x/tools/cmd/guru &&\
   go get -u -v github.com/josharian/impl &&\
   go get -u -v github.com/haya14busa/goplay/cmd/goplay &&\
