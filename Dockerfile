@@ -13,30 +13,28 @@ USER dev
 
 # Install specific tools needed by CHE
 RUN \
-  go get -u github.com/ramya-rao-a/go-outline &&\
-  go get -u github.com/uudashr/gopkgs/cmd/gopkgs@latest &&\
-  go get -u honnef.co/go/tools &&\
-  go get -u github.com/golangci/golangci-lint &&\
-  go get -u github.com/mgechev/revive &&\
-  go get -u github.com/ramya-rao-a/go-outline &&\
-  go get -u github.com/acroca/go-symbols &&\
-  go get -u github.com/mdempsky/gocode &&\
-  go get -u github.com/rogpeppe/godef &&\
-  go get -u golang.org/x/tools/cmd/godoc &&\
-  go get -u github.com/zmb3/gogetdoc &&\
-  go get -u golang.org/x/lint/golint &&\
-  go get -u github.com/fatih/gomodifytags &&\
-  go get -u golang.org/x/tools/cmd/gorename &&\
-  go get -u sourcegraph.com/sqs/goreturns &&\
-  go get -u golang.org/x/tools/cmd/goimports &&\
-  go get -u github.com/cweill/gotests &&\
-  go get -u golang.org/x/tools/cmd/guru &&\
-  go get -u github.com/josharian/impl &&\
-  go get -u github.com/haya14busa/goplay/cmd/goplay &&\
-  go get -u github.com/davidrjenni/reftools/cmd/fillstruct &&\
-  go get -u github.com/tylerb/gotype-live &&\
-  go get -u github.com/sourcegraph/go-langserver &&\
-  go get -u gotest.tools/gotestsum
+    go get -u -v github.com/ramya-rao-a/go-outline@latest && \
+    go get -u -v github.com/acroca/go-symbols@latest &&  \
+    go get -u -v github.com/stamblerre/gocode@latest &&  \
+    go get -u -v github.com/rogpeppe/godef@latest && \
+    go get -u -v golang.org/x/tools/cmd/godoc@latest && \
+    go get -u -v github.com/zmb3/gogetdoc@latest && \
+    go get -u -v golang.org/x/lint/golint@latest && \
+    go get -u -v github.com/fatih/gomodifytags@latest &&  \
+    go get -u -v golang.org/x/tools/cmd/gorename@latest && \
+    go get -u -v sourcegraph.com/sqs/goreturns@latest && \
+    go get -u -v golang.org/x/tools/cmd/goimports@latest && \
+    go get -u -v github.com/cweill/gotests@latest && \
+    go get -u -v golang.org/x/tools/cmd/guru@latest && \
+    go get -u -v github.com/josharian/impl@latest && \
+    go get -u -v github.com/haya14busa/goplay/cmd/goplay@latest && \
+    go get -u -v github.com/davidrjenni/reftools/cmd/fillstruct@latest && \
+    go get -u -v github.com/go-delve/delve/cmd/dlv@latest && \
+    go get -u -v github.com/rogpeppe/godef@latest && \
+    go get -u -v github.com/uudashr/gopkgs/cmd/gopkgs@v2 && \
+    go get -u -v golang.org/x/tools/cmd/gotype@latest && \
+    go get -u -v golang.org/x/tools/gopls@latest && \
+    go get -u -v github.com/stamblerre/gocode@latest
 
 WORKDIR "/projects"
 VOLUME "/home/dev"
