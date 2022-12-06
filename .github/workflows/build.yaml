@@ -1,4 +1,4 @@
-name: Build of UBI 8 based Developer Images
+name: Build Che images
 
 on:
   push:
