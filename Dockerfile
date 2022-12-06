@@ -68,6 +68,7 @@ RUN echo "Install dagger" &&\
     chmod +x /usr/local/bin/dagger
 
 ADD etc/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 RUN \
     apt-get clean && \
