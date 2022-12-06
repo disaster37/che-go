@@ -2,7 +2,7 @@ name: Build of UBI 8 based Developer Images
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
   build_universal_ubi8_image:
