@@ -1,44 +1,77 @@
-FROM golang:1.13
+# Copyright (c) 2019 Red Hat, Inc.
+# This program and the accompanying materials are made
+# available under the terms of the Eclipse Public License 2.0
+# which is available at https://www.eclipse.org/legal/epl-2.0/
+#
+# SPDX-License-Identifier: EPL-2.0
+#
+# Contributors:
+#   Red Hat, Inc. - initial API and implementation
 
-MAINTAINER Sebastien LANGOUREAUX <linuxworkgroup@hotmail.com>
+FROM golang:1.19.3-bullseye
 
-ARG http_proxy
-ARG https_proxy
+ENV HOME=/home/theia \
+    DAGGER_VERSION="v0.2.36"
 
-ENV GO111MODULE=on
+RUN mkdir /projects ${HOME} && \
+    # Change permissions to let any arbitrary user
+    for f in "${HOME}" "/etc/passwd" "/projects"; do \
+      echo "Changing permissions on ${f}" && chgrp -R 0 ${f} && \
+      chmod -R g+rwX ${f}; \
+    done
 
-ADD https://raw.githubusercontent.com/disaster37/che-scripts/master/debian.sh /tmp/debian.sh
-RUN sh /tmp/debian.sh
-USER dev
+# Install / Configure Golang
+RUN set -e -x && \
+    go install github.com/acroca/go-symbols@latest &&\
+    go install github.com/cweill/gotests/gotests@latest &&\
+    go install github.com/davidrjenni/reftools/cmd/fillstruct@latest &&\
+    go install github.com/haya14busa/goplay/cmd/goplay@latest &&\
+    go install github.com/stamblerre/gocode@latest &&\
+    mv /go/bin/gocode /go/bin/gocode-gomod &&\
+    go install github.com/mdempsky/gocode@latest &&\
+    go install github.com/ramya-rao-a/go-outline@latest &&\
+    go install github.com/rogpeppe/godef@latest &&\
+    go install github.com/sqs/goreturns@latest &&\
+    go install github.com/uudashr/gopkgs/v2/cmd/gopkgs@latest &&\
+    go install github.com/zmb3/gogetdoc@latest &&\
+    go install honnef.co/go/tools/cmd/staticcheck@latest &&\
+    go install golang.org/x/tools/cmd/gorename@latest &&\
+    go install github.com/go-delve/delve/cmd/dlv@latest &&\
+    go install golang.org/x/tools/gopls@latest &&\
+    chmod -R 777 /go && \
+    mkdir -p /.cache && chmod -R 777 /.cache && \
+    mkdir -p /usr/local/go && chmod -R 777 /usr/local/go &&\
+    cd /usr/local/go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.46.2
+ENV GOPATH /go
+ENV GOCACHE /.cache
+ENV GOROOT /usr/local/go
 
-# Install specific tools needed by CHE
+# Install some tools like docker
 RUN \
-    go get -u -v github.com/ramya-rao-a/go-outline@latest && \
-    go get -u -v github.com/acroca/go-symbols@latest &&  \
-    go get -u -v github.com/stamblerre/gocode@latest &&  \
-    go get -u -v github.com/rogpeppe/godef@latest && \
-    go get -u -v golang.org/x/tools/cmd/godoc@latest && \
-    go get -u -v github.com/zmb3/gogetdoc@latest && \
-    go get -u -v golang.org/x/lint/golint@latest && \
-    go get -u -v github.com/fatih/gomodifytags@latest &&  \
-    go get -u -v golang.org/x/tools/cmd/gorename@latest && \
-    go get -u -v sourcegraph.com/sqs/goreturns@latest && \
-    go get -u -v golang.org/x/tools/cmd/goimports@latest && \
-    go get -u -v github.com/cweill/gotests@latest && \
-    go get -u -v golang.org/x/tools/cmd/guru@latest && \
-    go get -u -v github.com/josharian/impl@latest && \
-    go get -u -v github.com/haya14busa/goplay/cmd/goplay@latest && \
-    go get -u -v github.com/davidrjenni/reftools/cmd/fillstruct@latest && \
-    go get -u -v github.com/go-delve/delve/cmd/dlv@latest && \
-    go get -u -v github.com/rogpeppe/godef@latest && \
-    go get -u -v github.com/uudashr/gopkgs/cmd/gopkgs@v2 && \
-    go get -u -v golang.org/x/tools/cmd/gotype@latest && \
-    go get -u -v golang.org/x/tools/gopls@latest && \
-    go get -u -v github.com/stamblerre/gocode@latest
+  apt-get update &&\
+  apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release \
+    vim &&\
+  curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg &&\
+  echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
+  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null &&\
+apt-get update &&\
+apt-get install -y --no-install-recommends docker-ce-cli
 
-WORKDIR "/projects"
-VOLUME "/home/dev"
+# Install dagger
+RUN echo "Install dagger" &&\
+    curl -o- -L https://github.com/dagger/dagger/releases/download/${DAGGER_VERSION}/dagger_${DAGGER_VERSION}_linux_amd64.tar.gz | tar xvz -C /usr/local/bin --strip-components=0 &&\
+    chmod +x /usr/local/bin/dagger
 
-CMD ["sleep", "infinity"]
+ADD etc/entrypoint.sh /entrypoint.sh
 
+RUN \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* ${HOME}/.cache
 
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD ${PLUGIN_REMOTE_ENDPOINT_EXECUTABLE}
